@@ -17,6 +17,7 @@ const TextEditor = () => {
     try {
       setLoading(true)
       const res = await axios.post(`https://storycraft-backend.onrender.com/project/new`, { projectName, content, genre }, { withCredentials: true });
+      console.log(res.data)
       if (res.status === 201) {
         toast.success('Project Created')
         const newProject = res.data.project; // The newly created project from the backend
