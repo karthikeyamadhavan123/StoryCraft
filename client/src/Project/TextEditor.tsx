@@ -16,7 +16,20 @@ const TextEditor = () => {
     e.preventDefault();
     try {
       setLoading(true)
-      const res = await axios.post(`https://storycraft-backend.onrender.com/project/new`, { projectName, content, genre }, { withCredentials: true });
+      const res = await axios.post(
+  `https://storycraft-backend.onrender.com/project/new`, 
+  { 
+    projectName, 
+    content, 
+    genre 
+  }, 
+  { 
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+);
       console.log(res.data)
       if (res.status === 201) {
         toast.success('Project Created')
