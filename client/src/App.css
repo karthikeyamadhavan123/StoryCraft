@@ -1,0 +1,11 @@
+/* global.css */
+body.dark {
+    background-color: #1a202c; /* Dark mode background */
+    color: #ffffff; /* Dark mode text */
+  }
+  
+  body {
+    background-color: #f7fafc; /* Light mode background */
+    color: #2d3748; /* Light mode text */
+  }
+  
