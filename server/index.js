@@ -21,6 +21,8 @@ app.use(
   cors({
     origin: 'https://storycraft-frontend.onrender.com',
     credentials: true,
+     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
 app.use(cookieParser());
