@@ -30,6 +30,8 @@ const Register = async (req, res) => {
         res.cookie('register', token, {
             maxAge: 1000 * 60 * 60 * 2,
             httpOnly:true,
+            secure: true,  // Required for HTTPS
+            sameSite: "None"
             path: '/'
         })
         return res.status(201).json({
