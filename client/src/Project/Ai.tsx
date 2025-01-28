@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/zustand/zustand";
 import { useChatStore } from "@/zustand/zustand";
 import axios from "axios";
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FiSettings,
   FiHelpCircle,
@@ -36,7 +36,7 @@ export default function GeminiDashboard() {
   const [responses, setResponses] = useState<ResponseData[]>([]);
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
   const [newChatText, setNewChatText] = useState<string>("");
-  const { addSuggestion, removeSuggestion,clearSuggestions } = useChatStore();
+  const { addSuggestion, removeSuggestion, } = useChatStore();
   const { projectId } = useParams<{ projectId: string }>();
 
   const toggleSidebar = () => {
@@ -56,7 +56,7 @@ export default function GeminiDashboard() {
 
   const handlePostChat = async () => {
     if (!newChatText.trim()) return;
-  
+
     setIsLoading(true);
     try {
       const res = await axios.post(
@@ -64,31 +64,31 @@ export default function GeminiDashboard() {
         { text: newChatText },
         { withCredentials: true }
       );
-  
+
       if (res.status === 201) {
         const { _id, responseText } = res.data;
-  
+
         // Immediately refetch the entire chat history
         const historyRes = await axios.get(
           `https://storycraft-backend.onrender.com/suggestion/${projectId}/all`,
           { withCredentials: true }
         );
-  
+
         // Update Zustand store and local state
         const suggestions = historyRes.data.suggestions;
-        
+
         // Clear existing suggestions in Zustand store
         const { clearSuggestions, addSuggestion } = useChatStore.getState();
         clearSuggestions();
-  
+
         // Add updated suggestions to Zustand store
-        suggestions.forEach(({ _id, projectId, text }:any) => 
+        suggestions.forEach(({ _id, projectId, text }: any) =>
           addSuggestion(_id, projectId, text)
         );
-  
+
         // Update local state
         setHistory(suggestions);
-  
+
         // Set responses and selected suggestion
         setResponses([{ _id, answer: responseText }]);
         setSelectedSuggestionId(_id);
@@ -100,7 +100,7 @@ export default function GeminiDashboard() {
       setIsLoading(false);
     }
   };
-  
+
   // Make fetchChatHistory accessible outside of useEffect
   const fetchChatHistory = async () => {
     try {
@@ -117,7 +117,7 @@ export default function GeminiDashboard() {
       console.error("Error fetching chat history:", error);
     }
   };
-  
+
   // Keep the existing useEffect
   useEffect(() => {
     fetchChatHistory();
@@ -179,9 +179,8 @@ export default function GeminiDashboard() {
 
       <div className="flex flex-col md:grid md:grid-cols-4 flex-grow">
         <aside
-          className={`p-4 bg-gray-900 md:block md:h-screen z-50 w-64 md:w-full ${
-            isSidebarOpen ? "block" : "hidden md:block"
-          } overflow-y-auto`}
+          className={`p-4 bg-gray-900 md:block md:h-screen z-50 w-64 md:w-full ${isSidebarOpen ? "block" : "hidden md:block"
+            } overflow-y-auto`}
         >
           <button
             className="block w-full text-left bg-gray-800 p-2 rounded-md font-semibold hover:bg-gray-700"
@@ -194,11 +193,10 @@ export default function GeminiDashboard() {
             {history.map((item) => (
               <div key={item._id} className="flex items-center space-x-2">
                 <button
-                  className={`flex-1 bg-gray-800 rounded-lg hover:bg-gray-700 h-24 py-2 px-3 w-full cursor-pointer ${
-                    selectedSuggestionId === item._id
+                  className={`flex-1 bg-gray-800 rounded-lg hover:bg-gray-700 h-24 py-2 px-3 w-full cursor-pointer ${selectedSuggestionId === item._id
                       ? "border-2 border-blue-500"
                       : ""
-                  }`}
+                    }`}
                   onClick={() => handleClick(item._id)}
                 >
                   {item.text}
@@ -232,7 +230,35 @@ export default function GeminiDashboard() {
         </aside>
 
         <main className="col-span-3 p-4 md:p-8 flex flex-col">
-          {selectedSuggestionId ? (
+          {isNewChatOpen ? (
+            <div className="space-y-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-center text-white">
+                Start a New Chat
+              </h2>
+              <div className="relative w-full max-w-md mx-auto">
+                <input
+                  type="text"
+                  placeholder="Type your question here..."
+                  className="p-4 pl-12 w-full rounded-lg bg-gray-800 placeholder-gray-500 text-white outline-none"
+                  value={newChatText}
+                  onChange={handleInputChange}
+                />
+                <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white" />
+              </div>
+              <button
+                onClick={handlePostChat}
+                disabled={isLoading}
+                className="mt-4 px-3 text-center py-3 bg-blue-500 text-white rounded-lg disabled:bg-gray-600 w-20 flex justify-center items-center m-auto"
+              >
+                {isLoading ? "Generating..." : "Send"}
+              </button>
+              {isLoading && (
+                <div className="mt-2 text-center text-gray-500 animate-pulse">
+                  Generating answer...
+                </div>
+              )}
+            </div>
+          ) : selectedSuggestionId ? (
             <div className="space-y-4">
               {responses.map((response, index) => (
                 <div
@@ -254,31 +280,16 @@ export default function GeminiDashboard() {
               <h2 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-4 text-center">
                 Hello, {name}
               </h2>
-              <div className="relative w-full max-w-md mx-auto">
-                <input
-                  type="text"
-                  placeholder="Ask StoryAi"
-                  className="p-4 pl-12 w-full rounded-lg bg-gray-800 placeholder-gray-500 text-white outline-none"
-                  value={newChatText}
-                  onChange={handleInputChange}
-                />
-                <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white" />
-              </div>
               <button
-                onClick={handlePostChat}
-                disabled={isLoading}
-                className="mt-4 px-3 text-center py-3 bg-blue-500 text-white rounded-lg disabled:bg-gray-600 w-20 flex justify-center items-center m-auto"
+                className="mt-4 bg-blue-500 text-white rounded-lg py-2 px-4 m-auto"
+                onClick={() => setIsNewChatOpen(true)}
               >
-                {isLoading ? "Generating..." : "Send"}
+                Start a New Chat
               </button>
-              {isLoading && (
-                <div className="mt-2 text-center text-gray-500 animate-pulse">
-                  Generating answer...
-                </div>
-              )}
             </>
           )}
         </main>
+
       </div>
       <Link to={`/projects/${projectId}`} className="bg-purple-400 w-40 m-auto px-4 h-10 py-2 text-center">Back to project</Link>
 
