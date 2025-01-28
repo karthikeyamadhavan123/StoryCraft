@@ -30,7 +30,7 @@ const Register = async (req, res) => {
         res.cookie('register', token, {
             maxAge: 1000 * 60 * 60 * 2,
             httpOnly:true,  // Required for HTTPS
-            domain: '.onrender.com',
+            // domain: '.onrender.com',
             path: '/'
         })
         console.log("cookie sent:",req.cookie)
@@ -70,7 +70,7 @@ const Login = async (req, res) => {
         res.cookie('login', token, {
             maxAge: 1000 * 60 * 60 * 2,
             httpOnly:true,  // Required for HTTPs
-            domain: '.onrender.com',
+            // domain: '.onrender.com',
             path: '/'
         })
         return res.status(200).json({ username, userId, message: "Login successful" });
