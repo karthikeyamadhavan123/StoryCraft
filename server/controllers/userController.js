@@ -30,10 +30,10 @@ const Register = async (req, res) => {
         res.cookie('register', token, {
             maxAge: 1000 * 60 * 60 * 2,
             httpOnly:true,  // Required for HTTPS
-            sameSite: "None",
             domain: '.onrender.com',
             path: '/'
         })
+        console.log("cookie sent:",req.cookie)
         return res.status(201).json({
             success: true,
             message: "User registered successfully",
@@ -69,8 +69,7 @@ const Login = async (req, res) => {
         const username = user.username
         res.cookie('login', token, {
             maxAge: 1000 * 60 * 60 * 2,
-            httpOnly:true,  // Required for HTTPS
-            sameSite: "None",
+            httpOnly:true,  // Required for HTTPs
             domain: '.onrender.com',
             path: '/'
         })
