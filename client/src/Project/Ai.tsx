@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/zustand/zustand";
 import { useChatStore } from "@/zustand/zustand";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   FiSettings,
   FiHelpCircle,
@@ -31,13 +31,12 @@ export default function GeminiDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isNewChatOpen, setIsNewChatOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const name = useAuthStore((state: any) => state.user.username);
   const [history, setHistory] = useState<Props[]>([]);
   const [responses, setResponses] = useState<ResponseData[]>([]);
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
   const [newChatText, setNewChatText] = useState<string>("");
-  const { addSuggestion, removeSuggestion, clearSuggestions } = useChatStore();
+  const { addSuggestion, removeSuggestion,clearSuggestions } = useChatStore();
   const { projectId } = useParams<{ projectId: string }>();
 
   const toggleSidebar = () => {
@@ -49,8 +48,6 @@ export default function GeminiDashboard() {
     setSelectedSuggestionId(null);
     setResponses([]);
     setNewChatText("");
-    setIsChatOpen(true);
-    clearSuggestions();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +56,7 @@ export default function GeminiDashboard() {
 
   const handlePostChat = async () => {
     if (!newChatText.trim()) return;
-
+  
     setIsLoading(true);
     try {
       const res = await axios.post(
@@ -67,26 +64,35 @@ export default function GeminiDashboard() {
         { text: newChatText },
         { withCredentials: true }
       );
-
+  
       if (res.status === 201) {
         const { _id, responseText } = res.data;
-
+  
+        // Immediately refetch the entire chat history
         const historyRes = await axios.get(
           `https://storycraft-backend.onrender.com/suggestion/${projectId}/all`,
           { withCredentials: true }
         );
-
+  
+        // Update Zustand store and local state
         const suggestions = historyRes.data.suggestions;
+        
+        // Clear existing suggestions in Zustand store
+        const { clearSuggestions, addSuggestion } = useChatStore.getState();
         clearSuggestions();
-        suggestions.forEach(({ _id, projectId, text }: any) =>
+  
+        // Add updated suggestions to Zustand store
+        suggestions.forEach(({ _id, projectId, text }:any) => 
           addSuggestion(_id, projectId, text)
         );
-
+  
+        // Update local state
         setHistory(suggestions);
+  
+        // Set responses and selected suggestion
         setResponses([{ _id, answer: responseText }]);
         setSelectedSuggestionId(_id);
         setNewChatText("");
-        setIsChatOpen(true);
       }
     } catch (error) {
       console.error("Error sending chat:", error);
@@ -94,7 +100,8 @@ export default function GeminiDashboard() {
       setIsLoading(false);
     }
   };
-
+  
+  // Make fetchChatHistory accessible outside of useEffect
   const fetchChatHistory = async () => {
     try {
       const res = await axios.get(
@@ -110,7 +117,8 @@ export default function GeminiDashboard() {
       console.error("Error fetching chat history:", error);
     }
   };
-
+  
+  // Keep the existing useEffect
   useEffect(() => {
     fetchChatHistory();
   }, [projectId, addSuggestion]);
@@ -119,6 +127,8 @@ export default function GeminiDashboard() {
     navigator.clipboard.writeText(text);
     alert("Response copied to clipboard!");
   };
+
+
 
   const handleClick = async (id: string) => {
     try {
@@ -222,62 +232,51 @@ export default function GeminiDashboard() {
         </aside>
 
         <main className="col-span-3 p-4 md:p-8 flex flex-col">
-          {isChatOpen ? (
-            selectedSuggestionId ? (
-              <div className="space-y-4">
-                {responses.map((response, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-900 p-4 rounded-lg flex justify-between items-center"
-                  >
-                    <p className="text-white">{response.answer}</p>
-                    <button
-                      onClick={() => handleCopy(response.answer)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      <FiCopy size={20} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <>
-                <h2 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-4 text-center">
-                  Hello, {name}
-                </h2>
-                <div className="relative w-full max-w-md mx-auto">
-                  <input
-                    type="text"
-                    placeholder="Ask StoryAi"
-                    className="p-4 pl-12 w-full rounded-lg bg-gray-800 placeholder-gray-500 text-white outline-none"
-                    value={newChatText}
-                    onChange={handleInputChange}
-                  />
-                  <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white" />
-                </div>
-                <button
-                  onClick={handlePostChat}
-                  disabled={isLoading}
-                  className="mt-4 px-3 text-center py-3 bg-blue-500 text-white rounded-lg disabled:bg-gray-600 w-20 flex justify-center items-center m-auto"
+          {selectedSuggestionId ? (
+            <div className="space-y-4">
+              {responses.map((response, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-900 p-4 rounded-lg flex justify-between items-center"
                 >
-                  {isLoading ? "Generating..." : "Send"}
-                </button>
-                {isLoading && (
-                  <div className="mt-2 text-center text-gray-500 animate-pulse">
-                    Generating answer...
-                  </div>
-                )}
-              </>
-            )
-          ) : (
-            <div className="text-center">
-              <button
-                onClick={() => setIsChatOpen(true)}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-              >
-                Start New Chat
-              </button>
+                  <p className="text-white">{response.answer}</p>
+                  <button
+                    onClick={() => handleCopy(response.answer)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    <FiCopy size={20} />
+                  </button>
+                </div>
+              ))}
             </div>
+          ) : (
+            <>
+              <h2 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-4 text-center">
+                Hello, {name}
+              </h2>
+              <div className="relative w-full max-w-md mx-auto">
+                <input
+                  type="text"
+                  placeholder="Ask StoryAi"
+                  className="p-4 pl-12 w-full rounded-lg bg-gray-800 placeholder-gray-500 text-white outline-none"
+                  value={newChatText}
+                  onChange={handleInputChange}
+                />
+                <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white" />
+              </div>
+              <button
+                onClick={handlePostChat}
+                disabled={isLoading}
+                className="mt-4 px-3 text-center py-3 bg-blue-500 text-white rounded-lg disabled:bg-gray-600 w-20 flex justify-center items-center m-auto"
+              >
+                {isLoading ? "Generating..." : "Send"}
+              </button>
+              {isLoading && (
+                <div className="mt-2 text-center text-gray-500 animate-pulse">
+                  Generating answer...
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
