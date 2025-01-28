@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('../jwt/jwt');
 const User = require('../models/userSchema.js');
 const path = require('path');
