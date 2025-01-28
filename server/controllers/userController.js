@@ -29,8 +29,7 @@ const Register = async (req, res) => {
         await welcomeEmail(newUser.email);
         res.cookie('register', token, {
             maxAge: 1000 * 60 * 60 * 2,
-            httpOnly:true,
-            secure: true,  // Required for HTTPS
+            httpOnly:true,  // Required for HTTPS
             sameSite: "None"
             path: '/'
         })
@@ -69,8 +68,7 @@ const Login = async (req, res) => {
         const username = user.username
         res.cookie('login', token, {
             maxAge: 1000 * 60 * 60 * 2,
-            httpOnly:true,
-            secure: true,  // Required for HTTPS
+            httpOnly:true,  // Required for HTTPS
             sameSite: "None"
             path: '/'
         })
