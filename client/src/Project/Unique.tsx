@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -28,7 +28,7 @@ const Unique = () => {
   const [error, setError] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  
+
 
   useEffect(() => {
     if (project?.content) {
@@ -50,7 +50,7 @@ const Unique = () => {
   const handleSave = async () => {
     try {
       setError(null);
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:8080/project/${projectId}/edit`,
         { content, project_name: projectName },
         {
@@ -155,9 +155,8 @@ const Unique = () => {
               <button
                 onClick={handleSave}
                 disabled={!isEdited}
-                className={`flex items-center px-6 py-2 rounded-lg font-bold ${
-                  isEdited ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-600 cursor-not-allowed'
-                } text-white`}
+                className={`flex items-center px-6 py-2 rounded-lg font-bold ${isEdited ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-600 cursor-not-allowed'
+                  } text-white`}
               >
                 <Edit className="mr-2" /> Save Changes
               </button>
@@ -196,7 +195,7 @@ const Unique = () => {
           {/* AI Suggestions Button */}
           <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-6">
             <button
-              onClick={() =>navigate(`/chat/${projectId}`)}
+              onClick={() => navigate(`/chat/${projectId}`)}
               className="flex items-center px-8 py-3 rounded-full bg-purple-600 hover:bg-purple-700 text-white font-bold shadow-lg"
             >
               <Sparkles className="mr-2" /> AI Suggestions
