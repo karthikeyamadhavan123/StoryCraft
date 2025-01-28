@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import Sidebar from './Dashboard';
 import TextEditor from './TextEditor';
 import checkSessionExpiry from '@/Protected/sessionExpiry';
