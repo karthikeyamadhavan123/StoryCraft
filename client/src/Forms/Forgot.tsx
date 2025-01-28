@@ -16,7 +16,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/forgot-password", { email });
+      const response = await axios.post("https://storycraft-backend.onrender.com/api/forgot-password", { email });
       if (response.status === 200) {
         toast.success("Password reset link sent to your email.");
         setEmail("");

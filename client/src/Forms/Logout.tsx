@@ -14,7 +14,7 @@ const Logout = () => {
         try {
             setLoading(true)
             const response = await axios.post(
-                'http://localhost:8080/api/logout',
+                'https://storycraft-backend.onrender.com/api/logout',
                 {},
                 {
                     withCredentials: true

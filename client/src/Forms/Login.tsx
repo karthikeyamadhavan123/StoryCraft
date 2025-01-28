@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
     try {
       setLoading(true)
       e.preventDefault();
-      const response = await axios.post("http://localhost:8080/api/login", { email, password }, { withCredentials: true });
+      const response = await axios.post("https://storycraft-backend.onrender.com/api/login", { email, password }, { withCredentials: true });
       if (response.status === 200) {
         const { username, userId } = response.data
         loginUser(username, userId)

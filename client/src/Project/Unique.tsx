@@ -11,7 +11,7 @@ import axios from 'axios';
 const Unique = () => {
   const navigate = useNavigate();
   const { projectId } = useParams();
-  const url = `http://localhost:8080/project/${projectId}`;
+  const url = `https://storycraft-backend.onrender.com/project/${projectId}`;
 
   useEffect(() => {
     const check = checkSessionExpiry();

@@ -81,7 +81,7 @@ const Register = () => {
     e.preventDefault();
     try {
       setLoading(true)
-      const response = await axios.post("http://localhost:8080/api/register", formData, { withCredentials: true });
+      const response = await axios.post("https://storycraft-backend.onrender.com/api/register", formData, { withCredentials: true });
       if (response.status === 201) {
         const { username, userId } = response.data
         registerUser(username, userId)

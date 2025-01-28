@@ -20,7 +20,7 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/reset-password/${token}`,
+        `https://storycraft-backend.onrender.com/api/reset-password/${token}`,
         { password }
       );
       setPassword('')

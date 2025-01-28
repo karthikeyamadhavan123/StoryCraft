@@ -60,7 +60,7 @@ export default function GeminiDashboard() {
     setIsLoading(true);
     try {
       const res = await axios.post(
-        `http://localhost:8080/suggestion/${projectId}/new`,
+        `https://storycraft-backend.onrender.com/suggestion/${projectId}/new`,
         { text: newChatText },
         { withCredentials: true }
       );
@@ -70,7 +70,7 @@ export default function GeminiDashboard() {
   
         // Immediately refetch the entire chat history
         const historyRes = await axios.get(
-          `http://localhost:8080/suggestion/${projectId}/all`,
+          `https://storycraft-backend.onrender.com/suggestion/${projectId}/all`,
           { withCredentials: true }
         );
   
@@ -105,7 +105,7 @@ export default function GeminiDashboard() {
   const fetchChatHistory = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/suggestion/${projectId}/all`,
+        `https://storycraft-backend.onrender.com/suggestion/${projectId}/all`,
         { withCredentials: true }
       );
       const suggestions = res.data.suggestions as Props[];
@@ -133,7 +133,7 @@ export default function GeminiDashboard() {
   const handleClick = async (id: string) => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/suggestion/${projectId}/${id}/allsuggestion`,
+        `https://storycraft-backend.onrender.com/${projectId}/${id}/allsuggestion`,
         { withCredentials: true }
       );
       if (res.status === 200) {
@@ -148,7 +148,7 @@ export default function GeminiDashboard() {
   const handleDelete = async (id: string) => {
     try {
       const res = await axios.delete(
-        `http://localhost:8080/suggestion/${projectId}/${id}/delete`,
+        `https://storycraft-backend.onrender.com/suggestion/${projectId}/${id}/delete`,
         { withCredentials: true }
       );
       if (res.status === 200) {

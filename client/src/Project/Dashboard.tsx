@@ -26,7 +26,7 @@
     useEffect(() => {
       const fetchMyProjects = async () => {
         try {
-          const res = await axios.get('http://localhost:8080/project/all', { withCredentials: true })
+          const res = await axios.get('https://storycraft-backend.onrender.com/project/all', { withCredentials: true })
           setProject(res.data.project)
         } catch (error) {
           console.log(error);
