@@ -28,8 +28,7 @@ const Register = async (req, res) => {
         const token = jwt.createToken({ userId });
         await welcomeEmail(newUser.email);
         res.cookie('register', token, {
-            maxAge: 1000 * 60 * 60 * 2,
-            httpOnly:true,  // Required for HTTPS
+            maxAge: 1000 * 60 * 60 * 2, // Required for HTTPS
            secure: true,  // Required for HTTPS
             sameSite: 'None'
             path: '/'
